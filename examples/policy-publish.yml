@@ -1,0 +1,11 @@
+name: Publish Policy
+on:
+  release:
+    types: [published]
+jobs:
+  ftp-upload:
+    uses: Pipelines/.github/workflows/policy-publish.yml@main
+    # with:
+    #   local-dir: ./policy/
+    secrets:
+      FTP_PASS: ${{ secrets.POLICY_FTP_PASS }}

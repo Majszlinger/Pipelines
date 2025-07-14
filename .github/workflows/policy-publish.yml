@@ -1,0 +1,22 @@
+name: Publish Policy
+on:
+  workflow_call:
+    secrets:
+      FTP_PASS:
+        required: true
+jobs:
+  ftp-upload:
+    name: Ftp Upload
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: FTP Deploy Action
+      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      with:
+        server: 195.228.152.177
+        username: policy-pipeline
+        password: ${{ secrets.POLICY_FTP_PASS }}
+        local-dir: ./policy/
+        server-dir: /
+        protocol: ftp
+        port: 21
