@@ -1,0 +1,76 @@
+name: Upload to Google Play
+
+on:
+  workflow_call:
+    secrets:
+      GOOGLE_KEYSTORE_BASE64:
+        required: true
+      GOOGLE_KEY_PROPERTIES_BASE64:
+        required: true
+      GOOGLE_PLAY_JSON:
+        required: true
+    inputs:
+      flutter-version:
+        required: true
+        type: string
+      package-name:
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+            flutter-version: ${{ inputs.flutter-version }}
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.GOOGLE_KEYSTORE_BASE64 }}" | base64 -d > android/app/upload-keystore.jks
+
+      - name: Decode key.properties
+        run: |
+          echo "${{ secrets.GOOGLE_KEY_PROPERTIES_BASE64 }}" | base64 -d > android/keystore.properties
+
+      - name: Set up environment variables
+        shell: bash
+        # env:
+        #   TEST: TEST2
+        run: |
+          chmod +x android/ci_scripts/ci_pre_build.sh
+          ./android/ci_scripts/ci_pre_build.sh
+
+      - name: Build release AAB
+        run: |
+          # Set the version name and version code dynamically
+          VERSION_NAME="${GITHUB_REF##*/}" # Example: 1.0.<GitHub Run Number>
+          VERSION_CODE=$GITHUB_RUN_NUMBER       # Use GitHub Run Number as versionCode
+
+          echo "Using versionName: $VERSION_NAME"
+          echo "Using versionCode: $VERSION_CODE"
+
+          # Build the app bundle with the specified version name and version code
+          flutter build appbundle --build-name=$VERSION_NAME --build-number=$VERSION_CODE
+
+      - name: Setup Authorization with Google Play Store
+        run: |
+          echo '${{ secrets.GOOGLE_PLAY_JSON }}' > service_account.json
+
+      - name: Deploy bundle to Google Play
+        uses: r0adkll/upload-google-play@v1.1.3
+        with:
+          serviceAccountJson: service_account.json
+          packageName: {{ inputs.package-name }}
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          track: 'internal'
+          status: 'completed'
+          # whatsNewDirectory: whatsNew/
