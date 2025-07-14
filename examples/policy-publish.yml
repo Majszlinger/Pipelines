@@ -4,8 +4,8 @@ on:
     types: [published]
 jobs:
   ftp-upload:
-    uses: Pipelines/.github/workflows/policy-publish.yml@main
+    uses: Majszlinger/Pipelines/.github/workflows/policy-publish.yml@main
     # with:
     #   local-dir: ./policy/
     secrets:
-      FTP_PASS: ${{ secrets.POLICY_FTP_PASS }}
+      POLICY_FTP_PASS: ${{ secrets.POLICY_FTP_PASS }}

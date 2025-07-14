@@ -2,7 +2,7 @@ name: Publish Policy
 on:
   workflow_call:
     secrets:
-      FTP_PASS:
+      POLICY_FTP_PASS:
         required: true
 jobs:
   ftp-upload:
