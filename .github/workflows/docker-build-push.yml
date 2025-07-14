@@ -20,7 +20,7 @@ jobs:
           id: meta
           uses: docker/metadata-action@v3
           with:
-            images: ${{ inputs.image-name }}
+            images: "tomcsojn/${{ inputs.image-name }}"
             tags: type=sha #,prefix={{branch}}-
             flavor: latest=${{ github.event_name == 'release' }}
 
