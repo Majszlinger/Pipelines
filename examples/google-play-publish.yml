@@ -1,0 +1,16 @@
+name: Publish to Google Play (Remote)
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    uses: Majszlinger/Pipelines/.github/workflows/frontend/google-play-publish.yml@main
+    with:
+      flutter-version: '3.29.3'
+      package-name: 'com.example.app'
+    secrets:
+      GOOGLE_KEYSTORE_BASE64: ${{ secrets.GOOGLE_KEYSTORE_BASE64 }}
+      GOOGLE_KEY_PROPERTIES_BASE64: ${{ secrets.GOOGLE_KEY_PROPERTIES_BASE64 }}
+      GOOGLE_PLAY_JSON: ${{ secrets.GOOGLE_PLAY_JSON }}
