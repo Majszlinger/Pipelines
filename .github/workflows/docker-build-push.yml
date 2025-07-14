@@ -2,7 +2,10 @@ name: build and push Docker image
 
 on:
     workflow_call:
-
+        inputs:
+            image-name:
+                required: true
+                type: string
 jobs:
     build:
         name: Build
