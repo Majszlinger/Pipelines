@@ -9,6 +9,8 @@ on:
         required: true
       GOOGLE_PLAY_JSON:
         required: true
+      ENV_FILE_CONTENT:   # <-- Add this line
+        required: true
     inputs:
       flutter-version:
         required: true
@@ -41,13 +43,16 @@ jobs:
         run: |
           echo "${{ secrets.GOOGLE_KEY_PROPERTIES_BASE64 }}" | base64 -d > android/keystore.properties
 
-      - name: Set up environment variables
-        shell: bash
-        # env:
-        #   TEST: TEST2
+      # - name: Set up environment variables
+      #   shell: bash
+      #   # env:
+      #   #   TEST: TEST2
+      #   run: |
+      #     chmod +x android/ci_scripts/ci_pre_build.sh
+      #     ./android/ci_scripts/ci_pre_build.sh
+      - name: Set up .env file
         run: |
-          chmod +x android/ci_scripts/ci_pre_build.sh
-          ./android/ci_scripts/ci_pre_build.sh
+          echo "${{ secrets.ENV_FILE_CONTENT }}" > .env
 
       - name: Build release AAB
         run: |
