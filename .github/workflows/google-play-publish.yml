@@ -18,6 +18,10 @@ on:
       package-name:
         required: true
         type: string
+      flutter-base-dir:
+        required: false
+        type: string
+        default: './'
 
 jobs:
   deploy:
@@ -26,6 +30,9 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+
+      - name: Set working directory
+        run: cd ${{ inputs.flutter-base-dir }}
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
