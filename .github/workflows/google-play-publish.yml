@@ -31,22 +31,22 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Set working directory
-        run: cd ${{ inputs.flutter-base-dir }}
-
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
             flutter-version: ${{ inputs.flutter-version }}
 
       - name: Install dependencies
+        working-directory: ${{ inputs.flutter-base-dir }}
         run: flutter pub get
 
       - name: Decode keystore
+        working-directory: ${{ inputs.flutter-base-dir }}
         run: |
           echo "${{ secrets.GOOGLE_KEYSTORE_BASE64 }}" | base64 -d > android/app/upload-keystore.jks
 
       - name: Decode key.properties
+        working-directory: ${{ inputs.flutter-base-dir }}
         run: |
           echo "${{ secrets.GOOGLE_KEY_PROPERTIES_BASE64 }}" | base64 -d > android/keystore.properties
 
@@ -58,10 +58,12 @@ jobs:
       #     chmod +x android/ci_scripts/ci_pre_build.sh
       #     ./android/ci_scripts/ci_pre_build.sh
       - name: Set up .env file
+        working-directory: ${{ inputs.flutter-base-dir }}
         run: |
           echo "${{ secrets.ENV_FILE_CONTENT }}" > .env
 
       - name: Build release AAB
+        working-directory: ${{ inputs.flutter-base-dir }}
         run: |
           # Set the version name and version code dynamically
           VERSION_NAME="${GITHUB_REF##*/}" # Example: 1.0.<GitHub Run Number>
@@ -74,6 +76,7 @@ jobs:
           flutter build appbundle --build-name=$VERSION_NAME --build-number=$VERSION_CODE
 
       - name: Setup Authorization with Google Play Store
+        working-directory: ${{ inputs.flutter-base-dir }}
         run: |
           echo '${{ secrets.GOOGLE_PLAY_JSON }}' > service_account.json
 
