@@ -10,6 +10,7 @@ jobs:
     with:
       flutter-version: '3.29.3'
       package-name: 'com.example.app'
+      # flutter-base-dir: './app/'
     secrets:
       ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
       GOOGLE_KEYSTORE_BASE64: ${{ secrets.GOOGLE_KEYSTORE_BASE64 }}
