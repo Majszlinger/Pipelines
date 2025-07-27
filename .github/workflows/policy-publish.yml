@@ -26,3 +26,4 @@ jobs:
         server-dir: /
         protocol: ftp
         port: 21
+        state-name: .${{ github.repository }}-ftp-deploy-sync-state.json
