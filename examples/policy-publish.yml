@@ -7,5 +7,7 @@ jobs:
     uses: Majszlinger/Pipelines/.github/workflows/policy-publish.yml@main
     # with:
     #   local-dir: ./policy/
+    # with:
+    #   base-dir: './'
     secrets:
       POLICY_FTP_PASS: ${{ secrets.POLICY_FTP_PASS }}
