@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions-hub/kubectl@master
-        if: github.ref == 'refs/heads/master'
+        # if: github.ref == 'refs/heads/master'
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
