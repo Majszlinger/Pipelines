@@ -8,7 +8,8 @@ jobs:
   call-docker-build:
     uses: Majszlinger/Pipelines/.github/workflows/docker-build-push.yml@main
     with:
-      image_tag: ${{ github.event.repository.name }}
+      image-name: "${{ github.event.repository.name }}-frontend"
+      base-dir: "frontend"
     secrets:
       # Pass any required secrets here, for example:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
