@@ -6,6 +6,12 @@ on:
             image-name:
                 required: true
                 type: string
+        outputs:
+            tags:
+                description: The tag of the built image
+                value: ${{ jobs.build.outputs.tags }}
+
+
 jobs:
     build:
         name: Build
@@ -14,7 +20,7 @@ jobs:
             tags: ${{ steps.meta.outputs.tags }}
         steps:
         - name: Check out
-          uses: actions/checkout@v2
+          uses: actions/checkout@v2  
 
         - name: Docker meta
           id: meta

@@ -1,0 +1,17 @@
+name: Deploy to Kubernetes on Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    uses: Majszlinger/Pipelines/.github/workflows/kube-deploy.yml@main
+    with:
+      environment: production
+      image_tag: ${{ github.event.release.tag_name }}
+      # Add other inputs as needed
+    secrets:
+      # Pass required secrets for deployment
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      # Add other secrets as needed

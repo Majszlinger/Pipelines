@@ -3,32 +3,28 @@ name: build and push Docker image
 on:
     workflow_call:
         inputs:
-            image-name:
+            tags:
+                required: true
+                type: string
+            deployment-name:
+                required: true
+                type: string
+            pod-name:
+                required: true
+                type: string
+            namespace:
                 required: true
                 type: string
         secrets:
             KUBE_CONFIG:
                 required: true
 jobs:
-    deploy:
-      needs: build
-      name: Deploy
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v1
-        - name: Docker meta
-          id: meta
-          uses: docker/metadata-action@v3
-          with:
-            # list of Docker images to use as base name for tags
-            images: tomcsojn/${{ inputs.image-name }}
-            # generate Docker tags based on the following events/attributes
-            tags: type=sha,prefix={{branch}}-
-            #flavor: latest=true
-
-        - uses: actions-hub/kubectl@master
-          if: github.ref == 'refs/heads/master'
-          env:
-            KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-          with:
-            args: set image deployment/strive-backend-deployment strive-backend-pod=${{ steps.meta.outputs.tags }} --insecure-skip-tls-verify -n strive
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions-hub/kubectl@master
+        if: github.ref == 'refs/heads/master'
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+            args: set image deployment/${{ github.event.inputs.deployment-name }} ${{ github.event.inputs.pod-name }}=${{ github.event.inputs.tags }} --insecure-skip-tls-verify -n ${{ github.event.inputs.namespace }}
