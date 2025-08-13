@@ -33,7 +33,7 @@ jobs:
             images: "tomcsojn/${{ inputs.image-name }}"
             tags: |
               type=raw,value=${{ github.event.release.tag_name }},enable=${{ github.event_name == 'release' }}
-              type=raw,value=${{ github.ref_name }}-${{ github.sha }},enable=${{ github.event_name != 'release' }}
+              type=raw,value=${{ github.ref_name }}-${{ github.sha::7 }},enable=${{ github.event_name != 'release' }}
             flavor: latest=${{ github.event_name == 'release' }}
 
         - name: Login to DockerHub
