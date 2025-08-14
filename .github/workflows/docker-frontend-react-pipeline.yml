@@ -1,0 +1,40 @@
+name: Full React Frontend Docker Pipeline
+
+on:
+    workflow_call:
+        inputs:
+            deployment-name:
+                required: true
+                type: string
+            pod-name:
+                required: true
+                type: string
+            namespace:
+                required: true
+                type: string
+
+        secrets:
+            DOCKERHUB_USERNAME:
+                required: true
+            DOCKERHUB_TOKEN:
+                required: true
+    
+
+jobs:
+    build-and-deploy:
+        uses: ./.github/workflows/docker-build-push.yml
+        secrets: inherit
+        with:
+            image_name: ${{ github.event.repository.name }}
+        
+        
+
+    kube-deploy:
+        needs: build-and-deploy
+        uses: ./.github/workflows/kube-deploy.yml
+        secrets: inherit
+        with:
+            tags: ${{ needs.build-and-deploy.outputs.tags }}
+            deployment-name: ${{ inputs.deployment-name }}
+            pod-name: ${{ inputs.pod-name }}
+            namespace: ${{ inputs.namespace }}
