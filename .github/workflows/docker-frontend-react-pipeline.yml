@@ -3,6 +3,13 @@ name: Full React Frontend Docker Pipeline
 on:
     workflow_call:
         inputs:
+            image-name:
+                required: true
+                type: string
+            base-dir:
+                required: false
+                type: string
+                default: .
             deployment-name:
                 required: true
                 type: string
@@ -18,16 +25,15 @@ on:
                 required: true
             DOCKERHUB_TOKEN:
                 required: true
-    
 
 jobs:
     build-and-deploy:
         uses: ./.github/workflows/docker-build-push.yml
         secrets: inherit
         with:
-            image_name: ${{ github.event.repository.name }}
-        
-        
+            image-name: "${{ github.event.repository.name }}-frontend"
+            base-dir: ${{ inputs.base-dir }}
+
 
     kube-deploy:
         needs: build-and-deploy
