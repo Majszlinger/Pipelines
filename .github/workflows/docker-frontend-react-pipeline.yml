@@ -28,6 +28,9 @@ on:
                 required: true
             KUBE_CONFIG:
                 required: true
+            FRONTEND_BUILD_SECRETS:
+                required: false
+                description: 'JSON string of build secrets for the frontend'
 
 jobs:
     build-and-deploy:
