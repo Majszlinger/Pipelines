@@ -46,7 +46,7 @@ jobs:
           id: prepare-build-args
           run: |
             echo "build_args<<EOF" >> $GITHUB_OUTPUT
-            echo '${{ secrets.FRONTEND_BUILD_SECRETS }}' | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> $GITHUB_OUTPUT
+            echo "${{ secrets.FRONTEND_BUILD_SECRETS }}" | grep -v '^\s*$' >> $GITHUB_OUTPUT
             echo "EOF" >> $GITHUB_OUTPUT
 
         - name: Build and push
