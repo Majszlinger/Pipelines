@@ -42,6 +42,12 @@ jobs:
           with:
             username: ${{ vars.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_TOKEN }}
+        - name: Prepare build args
+          id: prepare-build-args
+          run: |
+            echo "build_args<<EOF" >> $GITHUB_OUTPUT
+            echo '${{ secrets.FRONTEND_BUILD_SECRETS }}' | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
 
         - name: Build and push
           uses: docker/build-push-action@v2
@@ -50,7 +56,4 @@ jobs:
             push: ${{ github.event_name != 'pull_request' }}
             tags: ${{ steps.meta.outputs.tags }}
             labels: ${{ steps.meta.outputs.labels }}
-            build-args: |
-              GIT_ACCESS_TOKEN=${{ secrets.GIT_ACCESS_TOKEN }}
-            secrets: |
-              GIT_ACCESS_TOKEN=${{ secrets.GIT_ACCESS_TOKEN }}
+            build-args:  ${{ steps.prepare-build-args.outputs.build_args }}
