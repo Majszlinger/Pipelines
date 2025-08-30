@@ -45,9 +45,11 @@ jobs:
         - name: Prepare build args
           id: prepare-build-args
           run: |
-            echo "build_args<<EOF" >> $GITHUB_OUTPUT
-            echo "${{ secrets.FRONTEND_BUILD_SECRETS }}" | grep -v '^\s*$' >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
+            {
+              echo 'build_args<<EOF'
+              echo "${{ secrets.FRONTEND_BUILD_SECRETS }}" | grep -v '^\s*$'
+              echo 'EOF'
+            } >> "$GITHUB_OUTPUT"
 
         - name: Build and push
           uses: docker/build-push-action@v2
