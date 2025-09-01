@@ -1,0 +1,52 @@
+name: Full flutter Frontend Docker Pipeline
+
+on:
+    workflow_call:
+        inputs:
+            image-name:
+                required: false
+                type: string
+                default: "${{ github.event.repository.name }}-app"
+            base-dir:
+                required: false
+                type: string
+                default: .
+            deployment-name:
+                required: true
+                type: string
+            pod-name:
+                required: true
+                type: string
+            namespace:
+                required: true
+                type: string
+
+        secrets:
+            # DOCKERHUB_USERNAME:
+            #     required: true
+            DOCKERHUB_TOKEN:
+                required: true
+            KUBE_CONFIG:
+                required: true
+            FRONTEND_BUILD_SECRETS:
+                required: false
+                description: 'JSON string of build secrets for the frontend'
+
+jobs:
+    build-and-deploy:
+        uses: ./.github/workflows/docker-build-push.yml
+        secrets: inherit
+        with:
+            image-name: ${{ inputs.image-name }}
+            base-dir: ${{ inputs.base-dir }}
+
+
+    kube-deploy:
+        needs: build-and-deploy
+        uses: ./.github/workflows/kube-deploy.yml
+        secrets: inherit
+        with:
+            tags: ${{ needs.build-and-deploy.outputs.tags }}
+            deployment-name: ${{ inputs.deployment-name }}
+            pod-name: ${{ inputs.pod-name }}
+            namespace: ${{ inputs.namespace }}
