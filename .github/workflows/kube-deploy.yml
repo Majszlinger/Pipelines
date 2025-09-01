@@ -22,9 +22,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Extract first image tag
+        id: extract-tag
+        run: |
+          echo "TAG=$(echo '${{ inputs.tags }}' | cut -d',' -f1)" >> $GITHUB_OUTPUT
+
       - uses: actions-hub/kubectl@master
-        # if: github.ref == 'refs/heads/master'
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
-          args: set image deployment/${{ inputs.deployment-name }} ${{ inputs.pod-name }}=${{ inputs.tags }} --insecure-skip-tls-verify -n ${{ inputs.namespace }}
+          args: set image deployment/${{ inputs.deployment-name }} ${{ inputs.pod-name }}=${{ steps.extract-tag.outputs.TAG }} --insecure-skip-tls-verify -n ${{ inputs.namespace }}
