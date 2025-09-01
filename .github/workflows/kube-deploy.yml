@@ -25,7 +25,7 @@ jobs:
       - name: Extract first image tag
         id: extract-tag
         run: |
-          echo "TAG=$(echo '${{ inputs.tags }}' | cut -d',' -f1)" >> $GITHUB_OUTPUT
+          echo "TAG=$(echo '${{ inputs.tags }}' | head -n1)" >> $GITHUB_OUTPUT
 
       - uses: actions-hub/kubectl@master
         env:
