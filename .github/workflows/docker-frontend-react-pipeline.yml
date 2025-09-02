@@ -28,7 +28,7 @@ on:
                 required: true
             KUBE_CONFIG:
                 required: true
-            FRONTEND_BUILD_SECRETS:
+            ENV_FILE_CONTENT:
                 required: false
                 description: 'JSON string of build secrets for the frontend'
 
