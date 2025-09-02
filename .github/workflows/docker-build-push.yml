@@ -42,11 +42,10 @@ jobs:
           with:
             username: ${{ vars.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_TOKEN }}
-        - name: Prepare build args
-          id: prepare-build-args
+        - name: Create build args file
           run: |
-            # Assign the secret safely into a variable
-            FRONTEND_BUILD_SECRETS="${{ secrets.FRONTEND_BUILD_SECRETS }}"
+            # Assign the secret safely into a variable (multiline preserved)
+            FRONTEND_BUILD_SECRETS="${FRONTEND_BUILD_SECRETS}"
 
             if [ -n "$FRONTEND_BUILD_SECRETS" ] && \
               [ -n "$(echo "$FRONTEND_BUILD_SECRETS" | grep -v '^\s*$')" ]; then
@@ -61,6 +60,8 @@ jobs:
             else
               echo "No build args file created - FRONTEND_BUILD_SECRETS is empty"
             fi
+          env:
+            FRONTEND_BUILD_SECRETS: ${{ secrets.FRONTEND_BUILD_SECRETS }}
 
         - name: Build and push
           uses: docker/build-push-action@v2
