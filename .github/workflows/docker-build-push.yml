@@ -45,11 +45,15 @@ jobs:
         - name: Prepare build args
           id: prepare-build-args
           run: |
-            if [ -n "${{ secrets.FRONTEND_BUILD_SECRETS }}" ] && [ "$(echo "${{ secrets.FRONTEND_BUILD_SECRETS }}" | grep -v '^\s*$')" != "" ]; then
+            # Assign the secret safely into a variable
+            FRONTEND_BUILD_SECRETS="${{ secrets.FRONTEND_BUILD_SECRETS }}"
+
+            if [ -n "$FRONTEND_BUILD_SECRETS" ] && \
+              [ -n "$(echo "$FRONTEND_BUILD_SECRETS" | grep -v '^\s*$')" ]; then
               {
-              echo 'build_args<<EOF'
-              echo "${{ secrets.FRONTEND_BUILD_SECRETS }}" | grep -v '^\s*$'
-              echo 'EOF'
+                echo 'build_args<<EOF'
+                echo "$FRONTEND_BUILD_SECRETS" | grep -v '^\s*$'
+                echo 'EOF'
               } >> "$GITHUB_OUTPUT"
               echo "Build args file created successfully"
               echo "Content of GITHUB_OUTPUT file:"
