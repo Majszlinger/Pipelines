@@ -53,7 +53,7 @@ jobs:
       - name: Run unit tests (excluding integration)
         run: |
           cd ${{ inputs.base-dir }}
-          pytest --cov=. --cov-report=xml --cov-report=term --ignore=tests/integration
+          pytest --cov=. --cov-report=xml --cov-report=term 
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
