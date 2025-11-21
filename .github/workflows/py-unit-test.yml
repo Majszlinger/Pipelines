@@ -39,6 +39,7 @@ jobs:
           cd ${{ inputs.base-dir }}
           pip install -r requirements.txt
           pip install pytest pytest-cov flake8
+          pip install -r requirements-test.txt
 
 
 
