@@ -1,0 +1,52 @@
+name: Integration Test
+
+on:
+  workflow_call:
+    inputs:
+      base-dir:
+        required: false
+        type: string
+        default: .
+    # secrets:
+      # Add secrets if needed
+
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:8
+        env:
+          MONGO_INITDB_ROOT_USERNAME: admin
+          MONGO_INITDB_ROOT_PASSWORD: password
+          MONGO_INITDB_DATABASE: test
+        ports: [27017:27017]
+        options: >-
+          --health-cmd="mongosh -u admin -p password --authenticationDatabase admin --eval 'db.adminCommand(\"ping\").ok' localhost:27017/test || exit 1"
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          cd ${{ inputs.base-dir }}
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Run integration tests only
+        run: |
+          cd ${{ inputs.base-dir }}
+          pytest --cov=. --cov-report=xml --cov-report=term tests/integration
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-integration
+          path: ${{ inputs.base-dir }}/coverage.xml

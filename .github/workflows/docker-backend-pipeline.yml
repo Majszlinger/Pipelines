@@ -30,7 +30,15 @@ on:
                 required: true
 
 jobs:
-    build-and-deploy:
+
+    lint-unit-test:
+        uses: ./.github/workflows/py-unit-test.yml
+        with:
+            base-dir: ${{ inputs.base-dir }}
+
+    build-and-push:
+        if: github.event_name == 'release' && github.event.action == 'published'
+        needs: lint-unit-test
         uses: ./.github/workflows/docker-build-push.yml
         secrets: inherit
         with:
@@ -39,11 +47,12 @@ jobs:
 
 
     kube-deploy:
-        needs: build-and-deploy
+        if: github.event_name == 'release' && github.event.action == 'published'
+        needs: build-and-push
         uses: ./.github/workflows/kube-deploy.yml
         secrets: inherit
         with:
-            tags: ${{ needs.build-and-deploy.outputs.tags }}
+            tags: ${{ needs.build-and-push.outputs.tags }}
             deployment-name: ${{ inputs.deployment-name }}
             pod-name: ${{ inputs.pod-name }}
             namespace: ${{ inputs.namespace }}

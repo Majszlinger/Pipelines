@@ -1,0 +1,23 @@
+name: Backend Test
+
+on:
+  workflow_call:
+    inputs:
+      base-dir:
+        required: false
+        type: string
+        default: .
+    # secrets:
+      # Add secrets if needed
+
+jobs:
+  lint-unit-test:
+    uses: ./.github/workflows/py-unit-test.yml
+    with:
+      base-dir: ${{ inputs.base-dir }}
+
+  integration-test:
+    needs: lint-unit-test
+    uses: ./.github/workflows/py-integration-test.yml
+    with:
+      base-dir: ${{ inputs.base-dir }}
