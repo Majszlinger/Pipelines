@@ -28,6 +28,8 @@ on:
                 required: true
             KUBE_CONFIG:
                 required: true
+            DEPLOY_KEY:
+                required: false
 
 jobs:
 
