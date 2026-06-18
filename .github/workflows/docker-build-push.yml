@@ -55,4 +55,4 @@ jobs:
             tags: ${{ steps.meta.outputs.tags }}
             labels: ${{ steps.meta.outputs.labels }}
             secrets: |
-              ssh_deploy_key=${{ secrets.DEPLOY_KEY }}
+                "ssh_deploy_key=${{ secrets.DEPLOY_KEY }}"
